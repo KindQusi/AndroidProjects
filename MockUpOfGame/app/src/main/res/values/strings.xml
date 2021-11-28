@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">SecondApp</string>
+    <string name="textNick">Your nick</string>
+    <string name="buttonLogIn">Log in</string>
+    <string name="buttonRegister">Sign Up</string>
+    <string name="textPassword">Your password</string>
+    <string name="channel_name">MyApp</string>
+    <string name="channel_description">Channel for my app</string>
+    <string name="FocusDialog_Text"> Update 0.1 \n New Features: \n -We added custom games to our game which can be found after clicking play button and play icon with a cog. \n \n More coming soon ^^</string>
+    <string name="FocusDialog_ConfirmButt">Sounds great!</string>
+</resources>

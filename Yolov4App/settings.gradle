@@ -1,0 +1,2 @@
+rootProject.name = "LiveCamV2"
+include ':app'

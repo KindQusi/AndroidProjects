@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_container"
+
+    android:background="@color/black"
+    android:orientation="vertical"
+    android:weightSum="20"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+
+        android:weightSum="3">
+
+        <Button
+            android:id="@+id/btnStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5px"
+            android:layout_marginRight="5px"
+            android:layout_weight="1"
+            android:onClick="onClick_Startbtn"
+            android:text="Start" />
+
+        <Button
+            android:id="@+id/btnStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5px"
+            android:layout_marginRight="5px"
+            android:layout_weight="1"
+            android:onClick="onClick_Stopbtn"
+            android:text="Stop" />
+
+        <Button
+            android:id="@+id/btnLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5px"
+            android:layout_marginRight="5px"
+            android:layout_weight="1"
+            android:onClick="onClick_OpenLabel"
+            android:text="Label" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:weightSum="3">
+        <TextView
+            android:id="@+id/txtScore"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Score:"
+            android:textColor="@color/white"
+            android:autoSizeTextType="uniform"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/txtHealth"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Health:"
+            android:textColor="@color/white"
+            android:autoSizeTextType="uniform"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/txtTimer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Timer:"
+            android:textColor="@color/white"
+            android:autoSizeTextType="uniform"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:weightSum="3">
+        <TextView
+            android:id="@+id/intScore"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/white"
+            android:autoSizeTextType="uniform"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/intHealth"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/white"
+            android:autoSizeTextType="uniform"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"/>
+        <TextView
+            android:id="@+id/intTimer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/white"
+            android:autoSizeTextType="uniform"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <com.mkuskowski.opengles_app1.MyGLSurfaceView
+        android:id="@+id/MyGLSurfaceView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="16" />
+
+
+</LinearLayout>
+
