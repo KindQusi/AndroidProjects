@@ -96,30 +96,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
     }
+
     private void DialogOfDevices()
     {
-        Log.d("DEBUG_LOG", "DialogOfDevices: Attempt to display list of devices");
-        Dialog dialog = new Dialog( this );
-
-        // Settings of dialog
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(true);
-        dialog.setContentView(R.layout.activity_selectdevice_dialog);
-        dialog.setCanceledOnTouchOutside(true);
-
-        // Getting devices list
-
         Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
 
-        RecyclerView recyclerView = (RecyclerView) dialog.findViewById(R.id.table_devices);
+        ArrayList<Devices> devices = new ArrayList<>();
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(dialog.getContext());
-        recyclerView.setLayoutManager(linearLayoutManager);
-
-        ArrayList<Devices> devices = new ArrayList<Devices>();
-
-        if (recyclerView == null)
-            Log.d("DEBUG_LOG", "DialogOfDevices: Null recuclerView");
         if (pairedDevices.size() > 0) {
             Log.d("DEBUG_LOG", "DialogOfDevices: Get list of devices");
             // There are paired devices. Get the name and address of each paired device.
@@ -130,79 +113,8 @@ public class MainActivity extends AppCompatActivity {
                 devices.add(new Devices(deviceName,deviceHardwareAddress));
             }
         }
-        // Preparing and pluging adapter
-        PairedDevicesListAdapter pairedDevicesListAdapter = new PairedDevicesListAdapter(devices);
-        recyclerView.setAdapter(pairedDevicesListAdapter);
-
+        Dialog dialog = new SelectDevice_Dialog(this,devices);
         dialog.show();
-
-    }
-
-    // Custom adapter
-    public class PairedDevicesListAdapter extends RecyclerView.Adapter<PairedDevicesListAdapter.DeviceRowView>
-    {
-        // Our list of devices
-        ArrayList<Devices> devices;
-        public PairedDevicesListAdapter( ArrayList<Devices> devices )
-        {
-            this.devices = devices;
-        }
-
-        // Preparing how our row looks like
-        public class DeviceRowView extends RecyclerView.ViewHolder
-        {
-            TextView tv_DeviceName , tv_DeviceAddress;
-            LinearLayout linearLayout;
-
-            public DeviceRowView(@NonNull View itemView) {
-                super(itemView);
-                tv_DeviceAddress = itemView.findViewById(R.id.tv_DeviceAddress);
-                tv_DeviceName = itemView.findViewById(R.id.tv_DeviceName);
-                linearLayout = itemView.findViewById(R.id.linearLayout);
-
-                linearLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Toast.makeText(MainActivity.this,
-                                "You clicked: " + tv_DeviceName.getText() + " with address: " + tv_DeviceAddress.getText(), Toast.LENGTH_LONG).show();
-                    }
-                });
-                // Add id to relative Layout
-
-            }
-        }
-
-        // Binding with our row with layout
-        @NonNull
-        @Override
-        public DeviceRowView onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.selectdevice_row,parent,false);
-            DeviceRowView deviceRowView = new DeviceRowView(view);
-            return deviceRowView;
-        }
-
-        // Binding our row with data
-        @Override
-        public void onBindViewHolder(@NonNull DeviceRowView holder, int position) {
-            holder.tv_DeviceName.setText(devices.get(position).name);
-            holder.tv_DeviceAddress.setText(devices.get(position).address);
-        }
-
-        @Override
-        public int getItemCount() {
-            return devices.size();
-        }
-
-
-    }
-    private class Devices{
-        public String name;
-        public String address;
-        public Devices(String name, String address)
-        {
-            this.address = address;
-            this.name = name;
-        }
     }
 
 
@@ -223,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                     // At the same time, respect the user's decision. Don't link to
                     // system settings in an effort to convince the user to change
                     // their decision.
-                    Log.d("DEBUG_LOG", "OnRequestPermResult: We didn't an permission");
+                    Log.d("DEBUG_LOG", "OnRequestPermResult: We didn't get an permission");
                 }
                 return;
         }

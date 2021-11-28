@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".selectdevice_dialog">
+    tools:context=".SelectDevice_Dialog">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/table_devices"
