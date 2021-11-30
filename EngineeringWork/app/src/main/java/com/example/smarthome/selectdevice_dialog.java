@@ -12,9 +12,13 @@ import java.util.ArrayList;
 
 public class SelectDevice_Dialog extends Dialog
 {
+
+    Devices device;
+    Context context;
     public SelectDevice_Dialog(@NonNull Context context , ArrayList<Devices> devices )
     {
         super(context);
+        this.context = context;
         basicSettings();
 
         // Initialize recycle view of devices in dialog
@@ -23,7 +27,7 @@ public class SelectDevice_Dialog extends Dialog
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        PairedDevicesListAdapter pairedDevicesListAdapter = new PairedDevicesListAdapter(devices,context);
+        PairedDevicesListAdapter pairedDevicesListAdapter = new PairedDevicesListAdapter(devices,this.getContext(),this);
         recyclerView.setAdapter(pairedDevicesListAdapter);
 
     }
@@ -34,5 +38,14 @@ public class SelectDevice_Dialog extends Dialog
         this.setCancelable(true);
         this.setContentView(R.layout.activity_selectdevice_dialog);
         this.setCanceledOnTouchOutside(true);
+
     }
+
+    public void SetSelectedDevice(String Name,String Address)
+    {
+        this.device = new Devices(Name,Address);
+        this.dismiss();
+    }
+
+
 }

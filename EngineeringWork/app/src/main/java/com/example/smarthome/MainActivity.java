@@ -1,26 +1,18 @@
 package com.example.smarthome;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -29,7 +21,14 @@ import java.util.Set;
 public class MainActivity extends AppCompatActivity {
 
     final int PERMISSION_REQUEST_CODE = 1;
+    public static final String SELECTED_DEVICE_NAME = "deviceName";
+    public static final String SELECTED_DEVICE_ADDRESS = "deviceAddress";
+
+
     BluetoothAdapter btAdapter;
+    SelectDevice_Dialog selectDevice_dialog;
+    Devices selectedDevice;
+
 
     Button bt_Connect;
 
@@ -46,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         bt_Connect = findViewById(R.id.bt_connect);
 
-        // Na początku sprawdzamy czy jest bluetooth
+        // If we have bluetooth
         if (btAdapter == null)
             CheckIfPhoneHasBluetooth();
 
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            // Wymagamy bluetootha
+            // We need bluetooth
             Log.d("DEBUG_LOG", "onCreate: We didn't get a bluetooth hardware");
         }
 
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         if (didWeGetPermission)
         {
             Log.d("DEBUG_LOG", "Click_bt_Connect: We get a permission");
-            // Otwieramy okno z wyborem urzadzenia do polaczenia
+            // Dialog with choose device
             DialogOfDevices();
         }
         else
@@ -80,21 +79,34 @@ public class MainActivity extends AppCompatActivity {
 
     private void CheckIfWeHavePermissions()
     {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            {
-            // You can use the API that requires the permission.
+        if (btAdapter != null)
+        {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                // You can use the API that requires the permission.
                 didWeGetPermission = true;
-            }
-        else
-            {
-            // You can directly ask for the permission.
-            // The registered ActivityResultCallback gets the result of this request.
+            } else {
+                // You can directly ask for the permission.
+                // The registered ActivityResultCallback gets the result of this request.
                 didWeGetPermission = false;
                 Log.d("DEBUG_LOG", "CheckIfWeHavePermissions: Ask for permission");
-                requestPermissions(permission,PERMISSION_REQUEST_CODE);
+                requestPermissions(permission, PERMISSION_REQUEST_CODE);
 
             }
+        }
 
+    }
+
+    public void StartConnecting(Devices device)
+    {
+        Toast.makeText(this,
+                         "You clicked: " + device.name + " with address: " + device.address, Toast.LENGTH_LONG).show();
+
+        Intent intent = new Intent(MainActivity.this,ConnectedActivity.class);
+
+        intent.putExtra(SELECTED_DEVICE_NAME,device.name);
+        intent.putExtra(SELECTED_DEVICE_ADDRESS, device.address);
+
+        startActivity(intent);
     }
 
     private void DialogOfDevices()
@@ -103,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
         ArrayList<Devices> devices = new ArrayList<>();
 
+        // If 0 user can have bluetooth turned off
         if (pairedDevices.size() > 0) {
             Log.d("DEBUG_LOG", "DialogOfDevices: Get list of devices");
             // There are paired devices. Get the name and address of each paired device.
@@ -113,8 +126,15 @@ public class MainActivity extends AppCompatActivity {
                 devices.add(new Devices(deviceName,deviceHardwareAddress));
             }
         }
-        Dialog dialog = new SelectDevice_Dialog(this,devices);
-        dialog.show();
+
+        selectDevice_dialog = new SelectDevice_Dialog(this,devices);
+        selectDevice_dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                StartConnecting(selectDevice_dialog.device);
+            }
+        });
+        selectDevice_dialog.show();
     }
 
 
@@ -146,13 +166,13 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean CheckIfPhoneHasBluetooth()
     {
-        // Sprawdzamy czy powinien byc w systemie
+        // Check if phone has bluetooth
         if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH  ) || !getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE ))
         {
             this.btAdapter = null;
             return false;
         }
-        // Sprawdzamy czy mamy do niego dostep
+        // Check if we get access ( permission )
         this.btAdapter = BluetoothAdapter.getDefaultAdapter();
         if (btAdapter == null)
             return false;

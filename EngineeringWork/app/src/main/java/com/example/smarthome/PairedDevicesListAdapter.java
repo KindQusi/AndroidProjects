@@ -19,10 +19,13 @@ public class PairedDevicesListAdapter extends RecyclerView.Adapter<PairedDevices
     // Our list of devices
     ArrayList<Devices> devices;
     Context context;
-    public PairedDevicesListAdapter(ArrayList<Devices> devices , Context contex)
+
+    SelectDevice_Dialog dialog;
+    public PairedDevicesListAdapter(ArrayList<Devices> devices , Context context , SelectDevice_Dialog dialog)
     {
         this.devices = devices;
-        this.context = contex;
+        this.context = context;
+        this.dialog = dialog;
     }
 
     // Preparing how our row looks like
@@ -40,11 +43,11 @@ public class PairedDevicesListAdapter extends RecyclerView.Adapter<PairedDevices
             linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(context,
-                            "You clicked: " + tv_DeviceName.getText() + " with address: " + tv_DeviceAddress.getText(), Toast.LENGTH_LONG).show();
+//                    Toast.makeText(context,
+//                            "You clicked: " + tv_DeviceName.getText() + " with address: " + tv_DeviceAddress.getText(), Toast.LENGTH_LONG).show();
+                    dialog.SetSelectedDevice((String)tv_DeviceName.getText(),(String)tv_DeviceAddress.getText());
                 }
             });
-            // Add id to relative Layout
 
         }
     }
