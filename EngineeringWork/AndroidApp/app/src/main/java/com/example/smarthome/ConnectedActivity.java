@@ -3,6 +3,7 @@ package com.example.smarthome;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -19,7 +20,8 @@ public class ConnectedActivity extends AppCompatActivity
 
     // Random UUID from generator
     // https://www.uuidgenerator.net
-    private final UUID uuid = UUID.fromString("0c767513-fcb6-48b9-b572-75484db2ab45");
+    //private final UUID uuid = UUID.fromString("0c767513-fcb6-48b9-b572-75484db2ab45");
+    private final UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     private Devices device;
     private ConnectThread connectThread;
@@ -53,8 +55,14 @@ public class ConnectedActivity extends AppCompatActivity
             try
             {
                 CreateHandler();
+                //connectThread = new ConnectThread(uuid,btAdapter,device,handler);
 
-                connectThread = new ConnectThread(uuid,btAdapter,device,handler);
+
+                BluetoothDevice btDevice = btAdapter.getRemoteDevice(device.address);
+                if (btDevice != null)
+                    Log.e("DEBUG_LOG", "Step 1 We created Bluetooth Device");
+
+                connectThread = new ConnectThread(uuid,btDevice,handler);
                 connectThread.run();
 
                 if (connectThread.GetMySocket().isConnected()) {
