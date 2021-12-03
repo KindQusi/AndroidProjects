@@ -8,8 +8,8 @@
 
     <TextView
         android:id="@+id/tv_Output"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="102dp"
+        android:layout_height="55dp"
         android:layout_marginTop="116dp"
         android:text="TextView"
         app:layout_constraintTop_toBottomOf="@+id/tv_DeviceNameLabel"
@@ -17,13 +17,13 @@
 
     <EditText
         android:id="@+id/tv_Input"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
+        android:layout_width="239dp"
+        android:layout_height="47dp"
+        android:hint="What u want send"
         app:layout_constraintBottom_toTopOf="@+id/bt_sendMessage"
         app:layout_constraintTop_toBottomOf="@+id/tv_Output"
         app:layout_constraintVertical_bias="0.262"
-        tools:layout_editor_absoluteX="176dp" />
+        tools:layout_editor_absoluteX="98dp" />
 
     <Button
         android:id="@+id/bt_sendMessage"
@@ -41,8 +41,8 @@
 
     <TextView
         android:id="@+id/tv_DeviceNameLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="96dp"
+        android:layout_height="52dp"
         android:layout_marginTop="84dp"
         android:text="TextView"
         app:layout_constraintTop_toTopOf="parent"

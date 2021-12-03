@@ -4,8 +4,10 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,8 +57,8 @@ public class ConnectedThread extends Thread
     public void run()
     {
         Log.d("DEBUG_LOG_ConnectedThread", "Step B run");
-        mmBuffer = new byte[1024];
-        int numBytes; // bytes returned from read()
+        /*mmBuffer = new byte[1024]; // bytes returned from read()
+        int numBytes = 0; //whichByte
 
         // Keep listening to the InputStream until an exception occurs.
         while (true)
@@ -65,19 +67,59 @@ public class ConnectedThread extends Thread
             {
                 Log.d("DEBUG_LOG_ConnectedThread", "run: Read inputStream");
                 // Read from the InputStream.
-                numBytes = mmInStream.read(mmBuffer);
+                mmBuffer[numBytes] = (byte) mmInStream.read();
                 // Send the obtained bytes to the UI activity.
-
-                //String mess = new String (numBytes);
-                Log.d("DEBUG_LOG_ConnectedThread", "run: Try send to handler");
-                Message readMsg = handler.obtainMessage(
-                        MessageConstants.MESSAGE_READ, numBytes, MessageConstants.HANDLED,
-                        mmBuffer);
-                readMsg.sendToTarget();
-                Log.d("DEBUG_LOG_ConnectedThread", "run: Sent to handler");
+                if (mmBuffer[numBytes] == '\n')
+                {
+                    String message = new String(mmBuffer,0,numBytes);
+                    // End of message
+                    Log.d("DEBUG_LOG_ConnectedThread", "run: Try send to handler");
+                    *Message readMsg = handler.obtainMessage(
+                            MessageConstants.MESSAGE_READ, message, MessageConstants.HANDLED,
+                            mmBuffer);
+                    readMsg.sendToTarget();
+                    handler.obtainMessage(MessageConstants.MESSAGE_READ,message).sendToTarget();
+                    Log.d("DEBUG_LOG_ConnectedThread", "run: Sent to handler");
+                    numBytes = 0;
+                }
+                else
+                {
+                    // It isnt the end of message
+                    numBytes++;
+                }
             }
             catch (Exception e)
             {
+                Log.e("DEBUG_LOG_ConnectedThread", "run: Input stream was disconnected", e);
+                break;
+            }
+        }*/
+        mmBuffer = new byte[1024]; // bytes returned from read()
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+
+        while (true)
+        {
+            try {
+                if (mmInStream.available() > 0) {
+                    Log.d("DEBUG_LOG_ConnectedThread", "run: mmInStream.available: " + mmInStream.available());
+                    Log.d("DEBUG_LOG_ConnectedThread", "run: Reading message");
+                    for (int length; (length = mmInStream.read(mmBuffer)) != -1; ) {
+                        result.write(mmBuffer, 0, length);
+                        Log.d("DEBUG_LOG_ConnectedThread", "run: Reading message for lengt: " + length);
+                    }
+                    Log.d("DEBUG_LOG_ConnectedThread", "run: Message in ByteArray");
+                    String message = result.toString("UTF-8");
+                    Log.d("DEBUG_LOG_ConnectedThread", "run: Try send to handler");
+                    handler.obtainMessage(MessageConstants.MESSAGE_READ, message).sendToTarget();
+                    Log.d("DEBUG_LOG_ConnectedThread", "run: Sent to handler: " + message);
+                }
+                else
+                {
+                    Log.d("DEBUG_LOG_ConnectedThread", "run: mmInStream.available: " + mmInStream.available());
+                    SystemClock.sleep(1000);
+                }
+
+            } catch (Exception e) {
                 Log.e("DEBUG_LOG_ConnectedThread", "run: Input stream was disconnected", e);
                 break;
             }

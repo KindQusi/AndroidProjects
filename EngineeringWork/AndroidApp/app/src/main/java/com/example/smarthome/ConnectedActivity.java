@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class ConnectedActivity extends AppCompatActivity
@@ -65,6 +66,7 @@ public class ConnectedActivity extends AppCompatActivity
             Log.d("DEBUG_LOG", "Step 4 ConnectedActivity: init connectThread");
             Log.d("DEBUG_LOG_ConnectedActivity", "Step B onCreate: connectThread init");
             connectThread = new ConnectThread(uuid,btDevice,handler);
+            //connectThread.start();
             connectThread.run();
 
             if (connectThread.GetMySocket().isConnected())
@@ -78,6 +80,9 @@ public class ConnectedActivity extends AppCompatActivity
                     Log.d("DEBUG_LOG_ConnectedActivity", "Step C onCreate: connectedThread init");
                     connectedThread = new ConnectedThread(socket, handler);
                     //connectedThread.run();
+                    connectedThread.start();
+                    //connectedThread.write( "t".getBytes(StandardCharsets.UTF_8));
+                    connectedThread.write( "x".getBytes(StandardCharsets.UTF_8));
                     Log.d("DEBUG_LOG_ConnectedActivity", "onCreate: connectedThread run state: " + connectThread.getState());
                 }
                 else
@@ -116,8 +121,8 @@ public class ConnectedActivity extends AppCompatActivity
     @Override
     public void onBackPressed()
     {
-        connectThread.cancel();
         connectedThread.cancel();
+        connectThread.cancel();
         finish();
     }
 
@@ -137,11 +142,11 @@ public class ConnectedActivity extends AppCompatActivity
                         {
                             case MessageConstants.FAILED:
                             {
-                                Log.d("DEBUG_LOG_CONNECTED", msg.what +" " + msg.arg1 + " FAILED" + message);
+                                Log.d("DEBUG_LOG_CONNECTED", msg.what +" " + msg.arg1 + " FAILED " + message);
                             }
                             case MessageConstants.HANDLED:
                             {
-                                Log.d("DEBUG_LOG_CONNECTED", msg.what +" " + msg.arg1 + " HANDLED");
+                                Log.d("DEBUG_LOG_CONNECTED", msg.what +" " + msg.arg1 + " HANDLED " + message);
 
                             }
                         }

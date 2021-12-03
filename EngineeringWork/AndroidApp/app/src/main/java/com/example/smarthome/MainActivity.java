@@ -96,15 +96,23 @@ public class MainActivity extends AppCompatActivity {
 
     public void StartConnecting(Devices device)
     {
-        Toast.makeText(this,
-                         "You clicked: " + device.name + " with address: " + device.address, Toast.LENGTH_LONG).show();
+        if (device != null) {
 
-        Intent intent = new Intent(MainActivity.this,ConnectedActivity.class);
+            Toast.makeText(this,
+                    "You clicked: " + device.name + " with address: " + device.address, Toast.LENGTH_LONG).show();
 
-        intent.putExtra(SELECTED_DEVICE_NAME,device.name);
-        intent.putExtra(SELECTED_DEVICE_ADDRESS, device.address);
+            Intent intent = new Intent(MainActivity.this, ConnectedActivity.class);
 
-        startActivity(intent);
+            intent.putExtra(SELECTED_DEVICE_NAME, device.name);
+            intent.putExtra(SELECTED_DEVICE_ADDRESS, device.address);
+
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(this,
+                    "U haven't choose any device",Toast.LENGTH_LONG).show();
+        }
     }
 
     private void DialogOfDevices()
