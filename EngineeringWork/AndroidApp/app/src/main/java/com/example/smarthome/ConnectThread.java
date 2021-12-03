@@ -21,6 +21,7 @@ public class ConnectThread extends Thread
 
     public ConnectThread( UUID uuid , BluetoothDevice btDevice  , Handler handler )//BluetoothAdapter btAdapter
     {
+        Log.d("DEBUG_LOG_ConnectThread", "Step A: Constructor init");
         //this.btAdapter = btAdapter;
         this.handler = handler;
         this.bluetoothDevice = btDevice;
@@ -28,25 +29,8 @@ public class ConnectThread extends Thread
         // Use a temporary object that is later assigned to mmSocket
         // because mmSocket is final.
         BluetoothSocket tmp = null;
-        //bluetoothDevice = btAdapter.getRemoteDevice(device.address);
 
-        Log.e("DEBUG_LOG", "ConnectThread: ConnectThread: btDevice: " + btDevice.getName() + " " + btDevice.getAddress());
-        //Log.e("DEBUG_LOG", "ConnectThread: ConnectThread: Address: " + device.address + " State of bt: " + btAdapter.getState());
-
-        /*
-        if ( ! btAdapter.isEnabled() )
-        {
-            Log.e("DEBUG_LOG", "ConnectThread: ConnectThread: bt Not enabled");
-        }
-        else
-        {
-            Log.e("DEBUG_LOG", "ConnectThread: ConnectThread: bt Is enabled");
-            // ListPairedDevices();
-        }
-        */
-
-
-
+        Log.d("DEBUG_LOG_ConnectThread", "Constructor init btDevice name: " + btDevice.getName() + " address: " + btDevice.getAddress());
         try
         {
             // Get a BluetoothSocket to connect with the given BluetoothDevice.
@@ -54,56 +38,46 @@ public class ConnectThread extends Thread
             // TODO Zamienić insecure
             //tmp = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
             tmp = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(uuid);
-            Log.e("DEBUG_LOG", "ConnectThread: ConnectThread: We created connect. TMP: " + tmp.isConnected());
+            //Log.d("DEBUG_LOG_ConnectThread", "Constructor init We created connect. TMP: " + tmp.isConnected());
+            Log.d("DEBUG_LOG_ConnectThread", "Constructor init We created tmp socket.");
         }
         //catch (IOException e)
         catch (Exception e)
         {
-            Log.e("DEBUG_LOG_CLIENT", "Socket's create() method failed, ", e);
+            Log.e("DEBUG_LOG_ConnectThread", "Constructor init failed createInsecureTF.. , ", e);
             this.handler.sendMessage(this.handler.obtainMessage(MessageConstants.CONNECTION_STATUS,MessageConstants.FAILED));
         }
 
-
-
         mmSocket = tmp;
-
-        /*try
-        {
-            mmSocket.connect();
-            Log.d("DEBUG_LOG", "Step 2b: Connected" );
-        }
-        catch (Exception e)
-        {
-            Log.e("DEBUG_LOG", "Step 2b: " + e);
-        }*/
     }
 
     public void run()
     {
         // Cancel discovery because it otherwise slows down the connection.
         // btAdapter.cancelDiscovery(); NO SCAN PREMMISION API 31 +
-        Log.e("DEBUG_LOG", "Step 2: Procceding after creating socket ");
+        Log.d("DEBUG_LOG_ConnectThread", "Step B run ");
         try
         {
 
             // Connect to the remote device through the socket. This call blocks
             // until it succeeds or throws an exception.
             mmSocket.connect();
-            Log.e("DEBUG_LOG", "Step 2b: Connected");
+            Log.d("DEBUG_LOG_ConnectThread", "run: We connected ");
             //handler.sendMessage(handler.obtainMessage(MessageConstants.CONNECTION_STATUS,MessageConstants.HANDLED));
         }
         catch (Exception connectException)
         {
             // Unable to connect; close the socket and return.
-            Log.e("DEBUG_LOG", "Step 2b: Not connected");
+            Log.e("DEBUG_LOG_ConnectThread", "run: We didn't connect");
             handler.sendMessage(handler.obtainMessage(MessageConstants.CONNECTION_STATUS,MessageConstants.FAILED));
             try
             {
                 mmSocket.close();
+                Log.e("DEBUG_LOG_ConnectThread", "run: Socket Closed");
             }
             catch (IOException closeException)
             {
-                Log.e("DEBUG_LOG_CLIENT", "Could not close the client socket", closeException);
+                Log.e("DEBUG_LOG_ConnectThread", "run: Could not close the client socket: ", closeException);
             }
 
             return;
@@ -117,20 +91,10 @@ public class ConnectThread extends Thread
 
     public BluetoothSocket GetMySocket()
     {
+        Log.d("DEBUG_LOG_ConnectThread", "GetMySocket: which is: " + mmSocket.isConnected());
         return mmSocket;
     }
 
-    /*private void ListPairedDevices()
-    {
-        Set<BluetoothDevice> mPairedDevices = btAdapter.getBondedDevices();
-        if (mPairedDevices.size() > 0)
-        {
-            for (BluetoothDevice mDevice : mPairedDevices)
-            {
-                Log.v("DEBUG_LOG_CLIENT", "PairedDevices: " + mDevice.getName() + " " + mDevice.getAddress());
-            }
-        }
-    }*/
 
     // Closes the client socket and causes the thread to finish.
     public void cancel()

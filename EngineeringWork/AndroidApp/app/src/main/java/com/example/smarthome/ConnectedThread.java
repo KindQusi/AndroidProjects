@@ -20,6 +20,7 @@ public class ConnectedThread extends Thread
 
     public ConnectedThread(BluetoothSocket socket , Handler handler)
     {
+        Log.d("DEBUG_LOG_ConnectedThread", "Step A Constructor init");
         this.handler = handler;
         mmSocket = socket;
         InputStream tmpIn = null;
@@ -30,18 +31,21 @@ public class ConnectedThread extends Thread
         try
         {
             tmpIn = mmSocket.getInputStream();
+            Log.d("DEBUG_LOG_ConnectedThread", "Constructor: We get inputStream which is: " + tmpIn.available());
         }
         catch (IOException e)
         {
-            Log.e("DEBUG_LOG_CONNECTED", "Error occurred when creating input stream", e);
+            Log.e("DEBUG_LOG_ConnectedThread", "Constructor: Error occurred when creating input stream", e);
         }
+
         try
         {
             tmpOut = mmSocket.getOutputStream();
+            Log.d("DEBUG_LOG_ConnectedThread", "Constructor: We get outputStream");
         }
         catch (IOException e)
         {
-            Log.e("DEBUG_LOG_CONNECTED", "Error occurred when creating output stream", e);
+            Log.e("DEBUG_LOG_ConnectedThread", "Constructor: Error occurred when creating output stream", e);
         }
 
         mmInStream = tmpIn;
@@ -50,6 +54,7 @@ public class ConnectedThread extends Thread
 
     public void run()
     {
+        Log.d("DEBUG_LOG_ConnectedThread", "Step B run");
         mmBuffer = new byte[1024];
         int numBytes; // bytes returned from read()
 
@@ -58,20 +63,22 @@ public class ConnectedThread extends Thread
         {
             try
             {
+                Log.d("DEBUG_LOG_ConnectedThread", "run: Read inputStream");
                 // Read from the InputStream.
                 numBytes = mmInStream.read(mmBuffer);
                 // Send the obtained bytes to the UI activity.
 
                 //String mess = new String (numBytes);
-
+                Log.d("DEBUG_LOG_ConnectedThread", "run: Try send to handler");
                 Message readMsg = handler.obtainMessage(
                         MessageConstants.MESSAGE_READ, numBytes, MessageConstants.HANDLED,
                         mmBuffer);
                 readMsg.sendToTarget();
+                Log.d("DEBUG_LOG_ConnectedThread", "run: Sent to handler");
             }
-            catch (IOException e)
+            catch (Exception e)
             {
-                Log.e("DEBUG_LOG_CONNECTED", "Input stream was disconnected", e);
+                Log.e("DEBUG_LOG_ConnectedThread", "run: Input stream was disconnected", e);
                 break;
             }
         }
@@ -80,15 +87,19 @@ public class ConnectedThread extends Thread
     // Call this from the main activity to send data to the remote device.
     public void write(byte[] bytes)
     {
+        Log.d("DEBUG_LOG_ConnectedThread", "write");
         try
         {
+            Log.d("DEBUG_LOG_ConnectedThread", "write: send message as bytes");
             mmOutStream.write(bytes);
 
             // Share the sent message with the UI activity.
+            Log.d("DEBUG_LOG_ConnectedThread", "write: Try send to handler");
             Message writtenMsg = handler.obtainMessage(
                     //MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
                     MessageConstants.MESSAGE_WRITE, MessageConstants.HANDLED, MessageConstants.FAILED, mmBuffer);
             writtenMsg.sendToTarget();
+            Log.d("DEBUG_LOG_ConnectedThread", "write: Sent to handler");
         }
         catch (IOException e)
         {

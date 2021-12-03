@@ -16,7 +16,6 @@ public class AcceptThread extends Thread
     private final BluetoothServerSocket mmServerSocket;
 
 
-    // NOT USED
     public AcceptThread(BluetoothAdapter btAdapter, UUID uuid)
     {
         // Use a temporary object that is later assigned to mmServerSocket
@@ -35,6 +34,7 @@ public class AcceptThread extends Thread
         {
             Log.e("DEBUG_LOG_SERVER", "Socket's listen() method failed", e);
         }
+
         mmServerSocket = tmp;
     }
 
