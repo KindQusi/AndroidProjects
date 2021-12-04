@@ -11,6 +11,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class ConnectedThread extends Thread
 {
@@ -94,7 +96,9 @@ public class ConnectedThread extends Thread
                 break;
             }
         }*/
-        mmBuffer = new byte[1024]; // bytes returned from read()
+
+        int sizeBuffer = 1024;
+        mmBuffer = new byte[sizeBuffer]; // bytes returned from read()
         ByteArrayOutputStream result = new ByteArrayOutputStream();
 
         while (true)
@@ -103,15 +107,37 @@ public class ConnectedThread extends Thread
                 if (mmInStream.available() > 0) {
                     Log.d("DEBUG_LOG_ConnectedThread", "run: mmInStream.available: " + mmInStream.available());
                     Log.d("DEBUG_LOG_ConnectedThread", "run: Reading message");
-                    for (int length; (length = mmInStream.read(mmBuffer)) != -1; ) {
+
+                    /*for (int length; (length = mmInStream.read(mmBuffer)) > -1; ) {
                         result.write(mmBuffer, 0, length);
-                        Log.d("DEBUG_LOG_ConnectedThread", "run: Reading message for lengt: " + length);
+                        Log.d("DEBUG_LOG_ConnectedThread", "run: Reading message for length: " + length);
+                    }*/
+
+                    // Lenght is number of bytes in array i guess
+
+                   /* for (int length; (length = mmInStream.read(mmBuffer)) > -1; ) {
+                        result.write(mmBuffer, 0, length);
+                        Log.d("DEBUG_LOG_ConnectedThread", "run: Reading message for length: " + length);
+                    }*/
+
+
+                    int length = mmInStream.available();
+                    for (int howManyArrays = mmInStream.available() / sizeBuffer; howManyArrays > -1; howManyArrays--)
+                    {
+                        mmInStream.read(mmBuffer);
+                        result.write(mmBuffer, 0, length);
+                        Log.d("DEBUG_LOG_ConnectedThread", "run: Reading message for length: " + length + " How many arrays: " + howManyArrays);
                     }
+
                     Log.d("DEBUG_LOG_ConnectedThread", "run: Message in ByteArray");
                     String message = result.toString("UTF-8");
+
                     Log.d("DEBUG_LOG_ConnectedThread", "run: Try send to handler");
                     handler.obtainMessage(MessageConstants.MESSAGE_READ, message).sendToTarget();
                     Log.d("DEBUG_LOG_ConnectedThread", "run: Sent to handler: " + message);
+
+                    mmInStream.
+                    result.flush();
                 }
                 else
                 {
